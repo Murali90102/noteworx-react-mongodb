@@ -1,0 +1,10 @@
+FROM node:8.1.0 as build
+WORKDIR /app
+COPY ../. /app/.
+
+RUN pwd && ls -lrt
+RUN npm install
+RUN npm run build
+
+FROM nginx
+COPY --from=build /app/public /usr/share/nginx/html

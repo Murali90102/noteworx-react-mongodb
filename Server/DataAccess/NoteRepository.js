@@ -5,7 +5,13 @@ const DbConnection = require('./DbConnection');
 
 const collection = 'notes';
 
-const connect = () => new DbConnection('mongodb://127.0.0.1:27017/noteworx');
+// const connect = () => new DbConnection('mongodb://127.0.0.1:27017/noteworx');
+
+const dbHost = process.env.DB_HOST || '127.0.0.1';
+const dbPort = process.env.DB_PORT || '27017';
+
+const connect = () => new DbConnection(`mongodb://${dbHost}:${dbPort}/noteworx`);
+
 
 const filters = {
     id: (id) => {

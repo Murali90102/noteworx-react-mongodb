@@ -1,0 +1,153 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: noteworkxmongodb
+  labels:
+    app: noteworkxmongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: noteworkxmongodb
+  template:
+    metadata:
+      labels:
+        app: noteworkxmongodb
+    spec:
+      containers:
+      - name: noteworkxmongodb
+        image: mongodb/mongodb-community-server:4.4.3-ubuntu2004-20230514T053842Z
+        ports:
+        - containerPort: 27017
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: noteworkxmongodb
+spec:
+  selector:
+    app: noteworkxmongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: noteworkxbackend
+  labels:
+    app: noteworkxbackend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: noteworkxbackend
+  template:
+    metadata:
+      labels:
+        app: noteworkxbackend
+    spec:
+      containers:
+      - name: noteworkxbackend
+        image: murali90102/noteworkxbe:TAG
+        # command: ["npm", "run", "serve:api"]
+        env:
+        - name: DB_HOST
+          value: "noteworkxmongodb"
+        - name: DB_PORT
+          value: "27017"
+        - name: PORT
+          value: "8000"
+
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: noteworkxbackend
+spec:
+  selector:
+    app: noteworkxbackend
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: noteworkxfrontend
+  labels:
+    app: noteworkxfrontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: noteworkxfrontend
+  template:
+    metadata:
+      labels:
+        app: noteworkxfrontend
+    spec:
+      containers:
+      - name: noteworkxfrontend
+        image: murali90102/noteworkxfe:TAG
+        env:
+        - name: API_URL
+          # value: "http://noteworkxbackend:8000/api"
+          value: "http://20.237.68.13:8000/api"
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: noteworkxfrontend
+spec:
+  selector:
+    app: noteworkxfrontend
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      # nodePort: 30007
+
+
+
+# ---
+# apiVersion: networking.k8s.io/v1
+# # apiVersion: extensions/v1beta1
+# kind: Ingress
+# metadata:
+#   name: noteworkx-ingress
+#   # annotations:
+#     # kubernetes.io/ingress.class: nginx
+#     # kubernetes.io/ingress.class: azure/application-gateway
+#     # nginx.ingress.kubernetes.io/ssl-redirect: "false"
+#     # nginx.ingress.kubernetes.io/use-regex: "true"
+#     # nginx.ingress.kubernetes.io/rewrite-target: /$2
+
+# spec:
+#   # ingressClassName: nginx-example
+#   ingressClassName: nginx
+#   rules:
+#   - http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: noteworkxfrontend
+#             port:
+#               number: 80
+
+
