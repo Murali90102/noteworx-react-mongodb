@@ -17,3 +17,8 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+
+- script: |
+    docker build -f dockerfiles/Dockerfile.be -t murali90102/practiceazurebe
+    docker build -f dockerfiles/Dockerfile.fe -t murali90102/practiceazurefe
+    
