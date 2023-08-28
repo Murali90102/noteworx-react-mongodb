@@ -22,4 +22,4 @@ steps:
     set -x
     ls -lrt
     docker build -f dockerfiles/Dockerfile.be -t murali90102/practiceazurebe .
-    docker build -f dockerfiles/Dockerfile.fe -t murali90102/practiceazurefe . 
+    docker build -f dockerfiles/Dockerfile.fe -t murali90102/practiceazurefe .
